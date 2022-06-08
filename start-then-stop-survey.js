@@ -70,7 +70,7 @@ conn.on("message", (msg) => {
 
 const lteSurvey = {
   one_shot: false,
-  rx_port: "J3",
+  rx_port: args["rx-port"],
   survey_parameters: [
     {
       tech: "lte",

@@ -8,7 +8,7 @@ const startSurvey = () => {
   fetch(`http://${args.remote}/sklt/survey/`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(lteSurvey),
+    body: JSON.stringify(p25Survey),
   })
     .then((resp) => {
       if (resp.ok) {
@@ -43,35 +43,10 @@ conn.on("message", (msg) => {
   }
 });
 
-const lteSurvey = {
-  // one_shot: true,
-  rx_port: "Jxxx_RX1",
+const p25Survey = {
+  one_shot: true,
+  rx_port: args["rx-port"],
   survey_parameters: [
-    // {
-    //   tech: "lte",
-    //   type: "band",
-    //   bands: [
-    //     { band: "2", channels: [] },
-    //     { band: "4", channels: [] },
-    //     { band: "5", channels: [] },
-    //     { band: "7", channels: [] },
-    //     { band: "12", channels: [] },
-    //     { band: "13", channels: [] },
-    //     { band: "14", channels: [] },
-    //     { band: "17", channels: [] },
-    //     { band: "20", channels: [] },
-    //     { band: "25", channels: [] },
-    //     { band: "26", channels: [] },
-    //     { band: "29", channels: [] },
-    //     { band: "30", channels: [] },
-    //     { band: "40", channels: [] },
-    //     { band: "41", channels: [] },
-    //     { band: "42", channels: [] },
-    //     { band: "48", channels: [] },
-    //     { band: "66", channels: [] },
-    //     { band: "71", channels: [] },
-    //   ],
-    // },
     {
       tech: "p25",
       type: "frequency-list",
