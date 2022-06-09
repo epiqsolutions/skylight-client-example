@@ -1,6 +1,6 @@
 import yargs from "yargs";
 
-const argv = yargs(process.argv)
+const argv = yargs(process.argv.slice(2))
   .option("remote", {
     alias: "r",
     type: "string",
