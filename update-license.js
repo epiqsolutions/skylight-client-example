@@ -23,6 +23,10 @@ const file = fileFromSync(args._[0], "text/plain");
 const formData = new FormData();
 formData.set("file", file);
 
+const skltAddr = args.remote.replace("3030", "7531");
+const metadata = { "skylight-address": skltAddr };
+formData.set("metadata", JSON.stringify(metadata));
+
 fetch(`http://${args.remote}/sklt/license/`, {
   method: "POST",
   body: formData,
