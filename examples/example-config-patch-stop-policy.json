@@ -1,0 +1,6 @@
+{
+  "scanner_parameters": {
+    "measurement_stop_policy": "num_detect_failures",
+    "measurement_num_detect_failures_limit": 20
+  }
+}

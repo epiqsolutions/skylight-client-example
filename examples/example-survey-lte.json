@@ -1,0 +1,10 @@
+[
+  {
+    "tech": "lte",
+    "type": "band",
+    "bands": [
+      { "band": "2", "channels": [] },
+      { "band": "4", "channels": [] }
+    ]
+  }
+]

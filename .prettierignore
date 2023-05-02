@@ -1,0 +1,9 @@
+# Ignore npm modules
+node_modules
+test-coverage
+
+# Ignore submodule
+band-freq
+
+# Ignore bitbucket Pipeline file
+bitbucket-pipelines.yml

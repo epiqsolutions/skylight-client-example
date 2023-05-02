@@ -12,8 +12,8 @@
   "devDependencies": {
     "formdata-polyfill": "^4.0.10",
     "node-fetch": "^3.2.4",
+    "prettier": "^2.8.8",
     "ws": "^8.6.0",
     "yargs": "^17.5.1"
-  },
-  "dependencies": {}
+  }
 }

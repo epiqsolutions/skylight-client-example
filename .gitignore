@@ -1,1 +1,5 @@
 node_modules
+
+# don't track any user-created configuration files, but keep the examples
+examples/*
+!examples/example*.json

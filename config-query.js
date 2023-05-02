@@ -3,7 +3,7 @@ import argv from './args.js'
 
 const args = argv.parse()
 
-fetch(`http://${args.remote}/sklt/survey/`)
+fetch(`http://${args.remote}/sklt/config/`)
   .then(resp => {
     if (resp.ok) {
       return resp.json()
@@ -12,7 +12,7 @@ fetch(`http://${args.remote}/sklt/survey/`)
   })
   .then(
     result => {
-      console.log('SURVEY', result)
+      console.log('CONFIG', result)
     },
     err => {
       console.error('ERROR:', err)
