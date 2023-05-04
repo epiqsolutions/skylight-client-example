@@ -38,7 +38,7 @@ const printFetchResult = printer => (resp, body) => {
     '-',
     resp.statusText,
     '\n\tresponse:\n\n',
-    body,
+    JSON.stringify(body, null, 2),
     '\n\n----\n'
   )
 }

@@ -1,6 +1,7 @@
 import yargs from 'yargs'
+import { hideBin } from 'yargs/helpers'
 
-const argv = yargs(process.argv.slice(2))
+const argv = yargs()
   .option('remote', {
     alias: 'r',
     type: 'string',
@@ -14,18 +15,28 @@ const argv = yargs(process.argv.slice(2))
     description: 'Specify Rx Port to be used when starting a survey',
     default: 'J3'
   })
-  .option('survey-file', {
-    alias: 's',
-    type: 'string',
-    description: 'Path to a survey json file',
-    default: './examples/example-survey-lte.json'
-  })
+  .strict()
   .help()
 
-export default {
-  parse: () => {
-    const args = argv.parse()
+const proxy = {
+  command: (...a) => {
+    argv.command(...a)
+    return proxy
+  },
+  parse: cmd => {
+    const santized = hideBin(process.argv)
+    let args
+
+    if (cmd != null) {
+      console.debug('running command:', cmd)
+      args = argv.parse([cmd, ...santized])
+    } else {
+      args = argv.parse(santized)
+    }
+
     console.debug('Using Remote Address:', args.remote)
     return args
   }
 }
+
+export default proxy

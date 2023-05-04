@@ -4,7 +4,19 @@ import WebSocket from 'ws'
 import argv from './args.js'
 import * as util from './util.js'
 
-const args = argv.parse()
+const args = argv
+  .command(
+    'scan-speed-monitor <survey-file>',
+    './examples/example-survey-lte.json',
+    yargs => {
+      yargs.positional('survey-file', {
+        type: 'string',
+        description: 'Path to a survey json file',
+        default: './examples/example-survey-lte.json'
+      })
+    }
+  )
+  .parse('scan-speed-monitor')
 
 const start = (remoteAddr, survey) => {
   return fetch(`http://${remoteAddr}/sklt/survey/`, {
@@ -72,7 +84,7 @@ const openConn = config => {
       cellId = `${event.tech}-${event.pci}-${event.frequency_mhz}`
 
       // add cell to known list and count
-      if (knownCellDict[cellId] == null) {
+      if (knownCellDict[cellId] == null && event.mib != null) {
         // this assumes that the first time we see a cell, it was decoded
         knownCellDict[cellId] = refreshCell(event)
         cellCount += 1
@@ -102,7 +114,6 @@ const openConn = config => {
           // if this cell that we're waiting for has become stale, remove it
           // from the known cells list and decrement the count down
           if (isStale) {
-            print(console.info, 'PCI - ', event.pci, 'is stale, removing.')
             delete knownCellDict[id]
             delete cellsNotSeenThisPhyIter[id]
             cellCount -= 1
@@ -119,7 +130,7 @@ const openConn = config => {
           'Phy Iteration Monitor',
           '---------------------',
           `\titeration:\t\t${phyIteration}`,
-          `\tcells found:\t\t${cellCount}`,
+          `\tcells:\t\t\t${cellCount}`,
           `\titeration time (last):\t${lapTime - lastPhyIterationComplete} ms`,
           `\titeration time (avg):\t${avgLap} ms`,
           `\tscan_iteration:\t\t${event.scan_iteration}`

@@ -4,7 +4,14 @@ import WebSocket from 'ws'
 import argv from './args.js'
 import * as util from './util.js'
 
-const args = argv.parse()
+const args = argv
+  .command('config-patch <configFilePath>', './path-to-file.json', yargs => {
+    yargs.positional('configFilePath', {
+      type: 'string',
+      description: 'script specific argument'
+    })
+  })
+  .parse('config-patch')
 
 const patchConfig = (remoteAddr, patchObj) => {
   return fetch(`http://${remoteAddr}/sklt/config/`, {
@@ -14,14 +21,14 @@ const patchConfig = (remoteAddr, patchObj) => {
   })
 }
 
-if (args._.length != 1) {
+if (args.configFilePath == null) {
   console.error('please provide a path to a config patch JSON file')
   process.exit(1)
 }
 
 let patchObj
 try {
-  const jsonString = fs.readFileSync(args._[0], 'utf-8')
+  const jsonString = fs.readFileSync(args.configFilePath, 'utf-8')
   patchObj = JSON.parse(jsonString)
 } catch (error) {
   console.error('Error reading JSON file:', error)

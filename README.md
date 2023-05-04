@@ -15,3 +15,7 @@ Example:
 ```
 node start-survey.js --remote 192.168.3.1:3030 --rx-port J3
 ```
+
+## --help
+
+run `node <script-name> --help` to get info about arguments for each script
