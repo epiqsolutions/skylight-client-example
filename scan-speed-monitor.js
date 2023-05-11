@@ -4,19 +4,7 @@ import WebSocket from 'ws'
 import argv from './args.js'
 import * as util from './util.js'
 
-const args = argv
-  .command(
-    'scan-speed-monitor <survey-file>',
-    './examples/example-survey-lte.json',
-    yargs => {
-      yargs.positional('survey-file', {
-        type: 'string',
-        description: 'Path to a survey json file',
-        default: './examples/example-survey-lte.json'
-      })
-    }
-  )
-  .parse('scan-speed-monitor')
+const args = argv.parse('start-survey')
 
 const start = (remoteAddr, survey) => {
   return fetch(`http://${remoteAddr}/sklt/survey/`, {

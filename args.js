@@ -15,6 +15,17 @@ const argv = yargs()
     description: 'Specify Rx Port to be used when starting a survey',
     default: 'J3'
   })
+  .command(
+    'start-survey <survey-file>',
+    './examples/example-survey-lte.json',
+    yargs => {
+      yargs.positional('survey-file', {
+        type: 'string',
+        description: 'Path to a survey json file',
+        default: './examples/example-survey-lte.json'
+      })
+    }
+  )
   .strict()
   .help()
 
