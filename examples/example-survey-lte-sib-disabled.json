@@ -1,0 +1,8 @@
+[
+  {
+    "tech": "lte",
+    "type": "band",
+    "system_information": ["MIB"],
+    "bands": [{ "band": "2", "channels": ["700", "850"] }]
+  }
+]
