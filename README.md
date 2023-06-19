@@ -31,8 +31,10 @@ npm install
 Example:
 
 ```
-node start-survey.js --remote 192.168.3.1:3030 --rx-port J3
+node start-survey.js --remote 192.168.3.1:3030 --rx-port J3 ./examples/example-survey-lte.json
 ```
+
+> **NOTE**: `192.168.3.1:3030` is the default `remote` address and `J3` is the default `rx-port`, so these options can technically be omitted on a stock setup.
 
 ### --help
 
