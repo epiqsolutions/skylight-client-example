@@ -45,6 +45,7 @@ const openConn = config => {
   let cellsNotSeenThisPhyIter = {}
   let cellCount = 0
   let countDown = 0
+  let scanCount = 0
   let cellId
   let startTime = Date.now()
   let lastPhyIterationComplete = startTime
@@ -68,6 +69,7 @@ const openConn = config => {
     } = JSON.parse(msg)
 
     if (type == 'scan') {
+      scanCount += 1
       // create a key for the PCI reported in this scan event
       cellId = `${event.tech}-${event.pci}-${event.frequency_mhz}`
 
@@ -113,7 +115,8 @@ const openConn = config => {
       // if all cells have been seen, restart the countdown
       if (cellCount > 0 && countDown === 0) {
         const lapTime = Date.now()
-        const avgLap = Math.round((lapTime - startTime) / (phyIteration + 1))
+        const timeSpan = lapTime - startTime
+        const avgLap = Math.round(timeSpan / (phyIteration + 1))
         reprint(
           'Phy Iteration Monitor',
           '---------------------',
@@ -121,7 +124,8 @@ const openConn = config => {
           `\tcells:\t\t\t${cellCount}`,
           `\titeration time (last):\t${lapTime - lastPhyIterationComplete} ms`,
           `\titeration time (avg):\t${avgLap} ms`,
-          `\tscan_iteration:\t\t${event.scan_iteration}`
+          `\tscan_iteration:\t\t${event.scan_iteration}`,
+          `\traw scans:\t\t${(scanCount / timeSpan) * 1000}/s`
         )
         countDown = cellCount
         cellsNotSeenThisPhyIter = resetAllNotSeen(knownCellDict)
