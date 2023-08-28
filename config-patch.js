@@ -36,9 +36,23 @@ try {
 }
 
 patchConfig(args.remote, patchObj).then(
-  () => process.exit(0),
+  resp => {
+    resp.json().then(
+      respBody => {
+        console.log('Response:', respBody)
+        if (resp.ok) {
+          process.exit(0)
+        }
+        process.exit(1)
+      },
+      err => {
+        console.log('Could not parse response', err)
+        process.exit(1)
+      }
+    )
+  },
   err => {
-    console.log('WTF', err)
+    console.log('Request failed', err)
     process.exit(1)
   }
 )
