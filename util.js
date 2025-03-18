@@ -58,3 +58,18 @@ export const loadSurveyFile = filePath => {
     console.error('Error reading JSON file:', error)
   }
 }
+
+export const circularBuffer = size => {
+  let length = 0
+  const buffer = new Array(size)
+  let index = 0
+  return {
+    push: (timestamp, currentScanCount) => {
+      buffer[index] = { timestamp, currentScanCount }
+      index = (index + 1) % size
+      length = Math.min(length + 1, size)
+    },
+    getOldest: () => (length < size ? buffer[0] : buffer[index]),
+    getLength: () => length
+  }
+}

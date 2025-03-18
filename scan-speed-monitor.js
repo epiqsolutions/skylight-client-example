@@ -41,6 +41,7 @@ const openConn = config => {
       measurement_detect_timeout
     }
   } = config
+  const scanSpeedBuffer = util.circularBuffer(50)
   let phyIteration = 0
   let cellsNotSeenThisPhyIter = {}
   let cellCount = 0
@@ -114,22 +115,31 @@ const openConn = config => {
 
       // if all cells have been seen, restart the countdown
       if (cellCount > 0 && countDown === 0) {
-        const lapTime = Date.now()
-        const timeSpan = lapTime - startTime
-        const avgLap = Math.round(timeSpan / (phyIteration + 1))
+        const nowTime = Date.now()
+        const oldestRecord = scanSpeedBuffer.getOldest() || {
+          timestamp: startTime,
+          currentScanCount: 0
+        }
+        const timeSpan = nowTime - oldestRecord.timestamp
+        const scanCountDelta = scanCount - oldestRecord.currentScanCount
+        const avgLap = Math.round(timeSpan / (scanSpeedBuffer.getLength() + 1))
         reprint(
           'Phy Iteration Monitor',
           '---------------------',
           `\titeration:\t\t${phyIteration}`,
           `\tcells:\t\t\t${cellCount}`,
-          `\titeration time (last):\t${lapTime - lastPhyIterationComplete} ms`,
+          `\titeration time (last):\t${nowTime - lastPhyIterationComplete} ms`,
           `\titeration time (avg):\t${avgLap} ms`,
+          `\taveraging info:\t\t{ window: ${scanSpeedBuffer.getLength()}, span: ${
+            timeSpan / 1000
+          }s, scans: ${scanCountDelta} }`,
           `\tscan_iteration:\t\t${event.scan_iteration}`,
-          `\traw scans:\t\t${(scanCount / timeSpan) * 1000}/s`
+          `\traw scans:\t\t${(scanCountDelta / timeSpan) * 1000}/s`
         )
         countDown = cellCount
         cellsNotSeenThisPhyIter = resetAllNotSeen(knownCellDict)
-        lastPhyIterationComplete = lapTime
+        lastPhyIterationComplete = nowTime
+        scanSpeedBuffer.push(nowTime, scanCount)
         phyIteration += 1
       }
     }
