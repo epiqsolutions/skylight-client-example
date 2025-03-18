@@ -12,7 +12,7 @@ fetch(`http://${args.remote}/sklt/status/`)
   })
   .then(
     result => {
-      console.log('STATUS', result)
+      console.log('STATUS', JSON.stringify(result, null, 2))
     },
     err => {
       console.error('ERROR:', err)
