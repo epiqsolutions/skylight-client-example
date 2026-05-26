@@ -1,4 +1,5 @@
 node_modules
+coverage-reports
 
 # don't track any user-created configuration files, but keep the examples
 examples/*

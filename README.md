@@ -39,3 +39,31 @@ node start-survey.js --remote 192.168.3.1:3030 --rx-port J3 ./examples/example-s
 ### --help
 
 run `node <script-name> --help` to get info about arguments for each script
+
+## Coverage Iteration Speed Reports
+
+`scan-coverage-report.js` measures scan speed as normalized coverage time: the
+milliseconds required per active cell in a coverage iteration. A coverage
+iteration is complete when at least one scan measurement has been received for
+every currently active detected cell. It warms up first to discover a comparison
+roster, then keeps an operational roster in sync with Skylight's configured
+measurement stop policy.
+
+Cells discovered after warmup are included in the operational roster and called
+out separately as late-discovered workload. This keeps the headline metric from
+pretending the scanner is only spending time on the warmup roster.
+
+Example:
+
+```
+node scan-coverage-report.js --remote 192.168.3.1:3030 --rx-port J3 --label old-release ./examples/example-survey-lte.json
+```
+
+The script writes a JSON summary, an iteration CSV, and a Markdown report under
+`coverage-reports/` by default.
+
+To compare two report summaries:
+
+```
+node compare-coverage-reports.js coverage-reports/old-release-summary.json coverage-reports/new-release-summary.json
+```
