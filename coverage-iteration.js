@@ -79,7 +79,18 @@ export class CoverageIterationTracker {
     this.measurementEndMs = timestampMs
 
     if (this.currentIteration != null) {
-      this.finalizeCurrentIteration('incomplete', timestampMs)
+      // A settled iteration eagerly seeds the next one at the same timestamp so
+      // we can measure latency from the prior completion. If the run ends before
+      // another scan arrives, that zero-scan placeholder should not be reported
+      // as a real incomplete iteration.
+      if (
+        this.currentIteration.scansConsumed === 0 &&
+        this.iterations.length > 0
+      ) {
+        this.currentIteration = null
+      } else {
+        this.finalizeCurrentIteration('incomplete', timestampMs)
+      }
       this.currentIteration = null
     }
 

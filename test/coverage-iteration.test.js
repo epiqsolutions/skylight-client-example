@@ -61,6 +61,8 @@ test('records complete coverage iterations for a stable roster', () => {
   assert.equal(complete.slowestCell.cellId, 'lte-2-1930')
   assert.equal(summary.iterationStats.complete.meanMs, 300)
   assert.equal(summary.iterationStats.complete.meanMsPerCell, 150)
+  assert.equal(summary.iterationStats.incompleteCount, 0)
+  assert.equal(summary.iterations.length, 1)
 })
 
 test('captures per-cell fairness when one cell is slow', () => {
@@ -206,6 +208,25 @@ test('adds decoded cells after warmup to the operational roster', () => {
       inCandidateRoster: false
     }
   ])
+})
+
+test('keeps a no-scan measurement run marked incomplete', () => {
+  const tracker = new CoverageIterationTracker({
+    config: failureConfig(20),
+    warmupMs: 1000,
+    measurementMs: 1000
+  })
+
+  tracker.processScan(scan(cellA, { scanIteration: 0, decode: true }), 0)
+  tracker.finishWarmup(1000)
+  tracker.finishRun(2000)
+
+  const summary = tracker.getSummary({ label: 'no-scan-run' })
+
+  assert.equal(summary.iterationStats.incompleteCount, 1)
+  assert.equal(summary.iterations.length, 1)
+  assert.equal(summary.iterations[0].status, 'incomplete')
+  assert.equal(summary.iterations[0].scansConsumed, 0)
 })
 
 test('compares old and new report summaries using normalized coverage time', () => {

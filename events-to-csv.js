@@ -29,7 +29,8 @@ const startWsConn = () => {
     console.log(columns.join(',') + ",recv_timestamp")
   })
   conn.on('close', () => {
-    exit(0)
+    // `exit` is not a global in Node ESM; use process.exit so close is clean.
+    process.exit(0)
   })
   conn.on('message', msg => {
     const evt = JSON.parse(msg)

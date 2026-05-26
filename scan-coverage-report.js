@@ -101,6 +101,26 @@ const runCoverageReport = options => {
     let warmupTimer = null
     let finishTimer = null
 
+    const closeConnection = () => {
+      try {
+        conn.close()
+      } catch (err) {
+        console.error('Error closing WebSocket:', err)
+      }
+    }
+
+    const stopStartedSurvey = async () => {
+      // Mirror the normal shutdown behavior on failure so we do not leave the
+      // device scanning after the script has already exited.
+      if (!options.leaveRunning && surveyId != null) {
+        try {
+          await stopSurvey(options.remote, surveyId)
+        } catch (err) {
+          console.error('Error stopping survey:', err)
+        }
+      }
+    }
+
     const finish = async reason => {
       if (finishStarted) {
         return
@@ -114,19 +134,8 @@ const runCoverageReport = options => {
         const endedAtMs = Date.now()
         tracker.finishRun(endedAtMs)
 
-        try {
-          conn.close()
-        } catch (err) {
-          console.error('Error closing WebSocket:', err)
-        }
-
-        if (!options.leaveRunning && surveyId != null) {
-          try {
-            await stopSurvey(options.remote, surveyId)
-          } catch (err) {
-            console.error('Error stopping survey:', err)
-          }
-        }
+        closeConnection()
+        await stopStartedSurvey()
 
         const summary = tracker.getSummary({
           label: options.label,
@@ -155,10 +164,19 @@ const runCoverageReport = options => {
       if (finishStarted) {
         return
       }
+
       finishStarted = true
       clearTimeout(warmupTimer)
       clearTimeout(finishTimer)
-      reject(err)
+      closeConnection()
+
+      stopStartedSurvey()
+        .catch(cleanupErr => {
+          console.error('Unexpected error during failure cleanup:', cleanupErr)
+        })
+        .finally(() => {
+          reject(err)
+        })
     }
 
     conn.on('open', async () => {
